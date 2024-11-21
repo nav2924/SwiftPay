@@ -12,12 +12,13 @@ import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/actions/user.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setisLoading] = useState(false);
   const router = useRouter();
-  const formSchema = authFormSchema("sign-up");
+  const formSchema = authFormSchema(type);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -27,12 +28,23 @@ const AuthForm = ({ type }: { type: string }) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setisLoading(true);
     try {
       if (type === "sign-in") {
+        const response = await signIn({
+          email: data.email,
+          password: data.password,
+        });
+        if (response) {
+          router.push("/"); // Redirect to home if successful
+        } else {
+          console.error("Sign-in failed. Please check your credentials.");
+        }
       }
       if (type === "sign-up") {
+        const newUser = await signUp(data);
+        setUser(newUser);
       }
     } catch (error) {
       console.log(error);
@@ -150,10 +162,8 @@ const AuthForm = ({ type }: { type: string }) => {
                       <Loader2 size={20} className="animate-spin" /> &nbsp;
                       Loading ...
                     </>
-                  ) : type == "sign-in" ? (
-                    "Sign In"
                   ) : (
-                    "Sign Up"
+                    "Sign In"
                   )}
                 </Button>
               </div>

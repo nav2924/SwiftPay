@@ -40,8 +40,8 @@ const CustomInput = ({
                 <Input
                   placeholder={placeholder}
                   className="input-class"
-                  {...field}
                   type={name === "password" ? "password" : "text"}
+                  {...field}
                 />
               </FormControl>
               <FormMessage className="form-message mt-2" />
