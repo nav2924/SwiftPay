@@ -36,11 +36,7 @@ const AuthForm = ({ type }: { type: string }) => {
           email: data.email,
           password: data.password,
         });
-        if (response) {
-          router.push("/"); // Redirect to home if successful
-        } else {
-          console.error("Sign-in failed. Please check your credentials.");
-        }
+        if (response) router.push("/");
       }
       if (type === "sign-up") {
         const newUser = await signUp(data);
@@ -162,8 +158,10 @@ const AuthForm = ({ type }: { type: string }) => {
                       <Loader2 size={20} className="animate-spin" /> &nbsp;
                       Loading ...
                     </>
-                  ) : (
+                  ) : type === "sign-in" ? (
                     "Sign In"
+                  ) : (
+                    "Sign Up"
                   )}
                 </Button>
               </div>
